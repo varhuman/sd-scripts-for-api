@@ -68,6 +68,9 @@ import library.huggingface_util as huggingface_util
 TOKENIZER_PATH = "openai/clip-vit-large-patch14"
 V2_STABLE_DIFFUSION_PATH = "stabilityai/stable-diffusion-2"  # ここからtokenizerだけ使う v2とv2.1はtokenizer仕様は同じ
 
+# TOKENIZER_PATH = "openai/clip-vit-large-patch14"
+TOKENIZER_PATH = "./huggingface_models/clip-vit-large-patch14"
+
 # checkpointファイル名
 EPOCH_STATE_NAME = "{}-{:06d}-state"
 EPOCH_FILE_NAME = "{}-{:06d}"
@@ -3058,8 +3061,9 @@ def prepare_accelerator(args: argparse.Namespace):
     if args.logging_dir is None:
         logging_dir = None
     else:
-        log_prefix = "" if args.log_prefix is None else args.log_prefix
-        logging_dir = args.logging_dir + "/" + log_prefix + time.strftime("%Y%m%d%H%M%S", time.localtime())
+        # log_prefix = "" if args.log_prefix is None else args.log_prefix
+        # logging_dir = args.logging_dir + "/" + log_prefix + time.strftime("%Y%m%d%H%M%S", time.localtime())
+        logging_dir = args.logging_dir
 
     if args.log_with is None:
         if logging_dir is not None:
@@ -3071,6 +3075,7 @@ def prepare_accelerator(args: argparse.Namespace):
         if log_with in ["tensorboard", "all"]:
             if logging_dir is None:
                 raise ValueError("logging_dir is required when log_with is tensorboard / Tensorboardを使う場合、logging_dirを指定してください")
+            os.makedirs(logging_dir, exist_ok=True)
         if log_with in ["wandb", "all"]:
             try:
                 import wandb
